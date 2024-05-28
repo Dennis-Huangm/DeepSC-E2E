@@ -1,2 +1,3 @@
 # DeepSC-E2E
 对语义通信领域论文《Deep_Learning_Enabled_Semantic_Communication_Systems》的复现
+后续添加argparse，尝试在linux环境下测试AMP半精度训练

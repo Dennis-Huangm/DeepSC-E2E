@@ -77,12 +77,8 @@ class Channels:
     def add_awgn(self, y, snr, device='cuda:0'):  # 该方案SNR可指定
         snr1 = 10 ** (snr / 10.0)
         xpower = torch.sum(y ** 2) / y.numel()
-        npower = xpower.to(device) / snr1
+        npower = xpower / snr1
         y_noise = torch.randn(size=y.shape).to(device) * torch.sqrt(npower) + y
-        # Ps = (torch.linalg.norm(y - y.mean())) ** 2  # signal power
-        # Pn = (torch.linalg.norm(y - y_noise)) ** 2  # noise power
-        # snr = 10 * torch.log10(Ps / Pn)
-        # print(snr)
         return y_noise
 
 
@@ -104,3 +100,9 @@ def PowerNormalize(x):
     if power > 1:
         x = torch.div(x, power)
     return x
+
+
+def check_snr(enc_output, voice):
+    Ps = (torch.linalg.norm(enc_output - enc_output.mean())) ** 2  # signal power
+    Pn = (torch.linalg.norm(enc_output - voice)) ** 2  # noise power
+    return 10 * torch.log10(Ps / Pn)

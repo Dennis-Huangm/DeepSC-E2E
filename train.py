@@ -26,7 +26,7 @@ def train_p1(net, mi_model, X, valid_lens, opt, scaler):
 def train_p2(net, channel_output, enc_output, X, mi_model, dec_input, valid_lens, opt, loss, scaler):
     opt.zero_grad()
     with autocast(enabled=False):
-        pred = net.receiver(dec_input, channel_output, valid_lens)
+        pred, _ = net.receiver(dec_input, channel_output, valid_lens)
         joint, marg = sample_batch(enc_output, channel_output)
         mi_info = mutual_information(joint, marg, mi_model)
         l = loss(pred, X, valid_lens).mean() - 0.0009 * mi_info

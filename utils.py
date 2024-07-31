@@ -81,6 +81,15 @@ class Channels:
         y_noise = torch.randn(size=y.shape).to(device) * torch.sqrt(npower) + y
         return y_noise
 
+    def add_AWGN(self, signal, snr, device='cuda:0'):
+        noise = torch.randn(size=signal.shape).to(device)  # 产生N(0,1)噪声数据
+        noise = noise - torch.mean(noise)  # 均值为0
+        signal_power = torch.linalg.norm(signal - signal.mean()) ** 2 / signal.numel()  # 此处是信号的std**2
+        noise_variance = signal_power / torch.pow(torch.tensor(10), torch.tensor((snr / 10)))  # 此处是噪声的std**2
+        noise = (torch.sqrt(noise_variance) / torch.std(noise)) * noise  ##此处是噪声的std**2
+        signal_noise = noise + signal
+        return signal_noise
+
 
 def grad_clipping(net, theta):
     """裁剪梯度"""

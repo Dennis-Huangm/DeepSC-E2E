@@ -12,6 +12,7 @@ def train_p1(net, mi_model, X, valid_lens, opt, scaler):
     with autocast(enabled=False):
         enc_output = net.transmitter(X, valid_lens)
         channel_output = PowerNormalize(net.channel.add_awgn(enc_output, 12))
+        print(check_snr(enc_output, channel_output))
         joint, marg = sample_batch(enc_output, channel_output)
         loss_mi = -mutual_information(joint, marg, mi_model)
 
